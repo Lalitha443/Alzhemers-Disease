@@ -1,0 +1,49 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+import joblib
+
+# ------------------------------------------------------
+# 1. LOAD YOUR DATA
+# ------------------------------------------------------
+df = pd.read_csv("alz_data.csv")   # <-- CHANGE THIS FILE NAME
+
+# Columns expected: adjust according to your dataset
+# age, gender(M=1,F=0), apoe4, mmse, cdr, educ, target
+X = df[['age', 'gender', 'apoe4', 'mmse', 'cdr', 'educ']]
+y = df['target']
+
+# ------------------------------------------------------
+# 2. TRAIN-TEST SPLIT
+# ------------------------------------------------------
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# ------------------------------------------------------
+# 3. SCALER
+# ------------------------------------------------------
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+# Save scaler
+joblib.dump(scaler, "scaler.pkl")
+
+# ------------------------------------------------------
+# 4. MODEL
+# ------------------------------------------------------
+model = RandomForestClassifier(random_state=42)
+model.fit(X_train_scaled, y_train)
+
+# Save model
+joblib.dump(model, "best_model.pkl")
+
+# ------------------------------------------------------
+# 5. ACCURACY
+# ------------------------------------------------------
+pred = model.predict(X_test_scaled)
+print("Accuracy:", accuracy_score(y_test, pred))
+print("Saved: best_model.pkl & scaler.pkl")
