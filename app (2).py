@@ -15,7 +15,18 @@ import joblib
 # Load Best Model (Random Forest)
 # -----------------------------
 # Initialize and train the Random Forest Classifier model
-rfc_model = RandomForestClassifier(random_state=42)
+import streamlit as st
+import numpy as np
+import joblib
+from sklearn.ensemble import RandomForestClassifier      # REQUIRED
+
+model = joblib.load("best_model.pkl")
+
+try:
+    scaler = joblib.load("scaler.pkl")
+except:
+    scaler = None
+
 rfc_model.fit(X_train, y_train)
 
 # Make predictions on the test set
